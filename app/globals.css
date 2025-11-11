@@ -120,3 +120,11 @@
     @apply bg-background text-foreground;
   }
 }
+/* Versteckt horizontale Scrollbars (nur bei no-scrollbar-Klasse) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

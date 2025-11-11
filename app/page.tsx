@@ -7,12 +7,14 @@ import Image from "next/image";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getSession, signOut, getUserRole } from "./_lib/data-service";
+import TestimonialsScroll from "@/components/TestimonialsScroll";
 
 const team = [
   { name: "Anna Müller", role: "Senior Stylistin", img: "/team_1.png" },
   { name: "Lukas Schmidt", role: "Color Specialist", img: "/team_2.jpg" },
   { name: "Sophie Weber", role: "Junior Stylistin", img: "/team3.jpg" },
   { name: "Muster Frau", role: "Junior Stylistin", img: "/team1.png" },
+  { name: "Muster Frau", role: "Junior Stylistin", img: "/team3.jpg" },
 ];
 
 const leistung = [
@@ -34,6 +36,7 @@ const menuItems = [
   { label: "Leistungen", href: "#services" },
   { label: "Über uns", href: "#about" },
   { label: "Unser Team", href: "#team" },
+  { label: "Kundenbewertung", href: "#customerReview" },
   { label: "Kontakt", href: "#contact" },
 ];
 
@@ -101,6 +104,9 @@ export default function Home() {
           </Link>
           <Link href="#team" className="hover:text-amber-600">
             Unser Team
+          </Link>
+          <Link href="#customerReview" className="hover:text-amber-600">
+            Kundenbewertung
           </Link>
           <Link href="#contact" className="hover:text-amber-600">
             Kontakt
@@ -280,7 +286,7 @@ export default function Home() {
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-neutral-800">
           Unser Team
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto px-4">
           {team.map((member, i) => (
             <motion.div
               key={i}
@@ -290,14 +296,16 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.2 }}
             >
-              <Image
-                src={member.img}
-                alt={member.name}
-                width={400}
-                height={400}
-                className="w-full h-64 object-cover rounded-2xl mb-4"
-                quality={75}
-              />
+              <div className="relative aspect-3/4 w-full mb-4">
+                <Image
+                  src={member.img}
+                  alt={member.name}
+                  fill
+                  className="object-cover rounded-2xl"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  quality={75}
+                />
+              </div>
               <h3 className="text-xl font-semibold mb-1 text-amber-600">
                 {member.name}
               </h3>
@@ -306,6 +314,9 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Customer Review */}
+      <TestimonialsScroll />
 
       {/* Contact Section */}
       <section
