@@ -33,7 +33,7 @@ export default function TermInBuchenPage() {
   // Generiere Zeit-Slots von 08:00 bis 17:30
   const timeSlots = generateTimeSlots();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
