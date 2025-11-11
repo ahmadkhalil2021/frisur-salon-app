@@ -66,3 +66,21 @@ export async function getUserRole(userId) {
   }
   return data?.role || null;
 }
+
+export async function getAppointments() {
+  const { data, error } = await supabase.from("appointments").select("*");
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
+export async function createAppointment(appointment) {
+  const { data, error } = await supabase
+    .from("appointments")
+    .insert([appointment]);
+  if (error) {
+    throw error;
+  }
+  return data;
+}
