@@ -78,10 +78,23 @@ export async function getAppointments() {
 export async function getAppointmentsByUserId(useId) {
   let { data: appointments, error } = await supabase
     .from("appointments")
-    .select("id, date, message, time")
+    .select("id, created_at, date, message, time")
 
     // Filters
     .eq("userId", useId);
+  if (error) {
+    throw error;
+  }
+  return appointments;
+}
+
+export async function getAppointmentsByDate(date) {
+  let { data: appointments, error } = await supabase
+    .from("appointments")
+    .select("id, date, message, time")
+
+    // Filters
+    .eq("date", date);
   if (error) {
     throw error;
   }

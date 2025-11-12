@@ -44,6 +44,7 @@ const generateTimeSlots = () => {
 };
 
 interface Appointment {
+  id: string;
   date: string;
   time: string;
   message?: string;
@@ -59,6 +60,7 @@ export default function CustomerAppointments() {
   // Generiere Zeit-Slots von 08:00 bis 17:30
   const timeSlots = generateTimeSlots();
   const [formData, setFormData] = useState({
+    id: "",
     date: "",
     time: "",
     message: "",
@@ -207,6 +209,7 @@ export default function CustomerAppointments() {
 
   const handleClose = () => {
     setFormData({
+      id: "",
       date: "",
       time: "",
       message: "",
@@ -229,10 +232,12 @@ export default function CustomerAppointments() {
         </TableHeader>
         <TableBody>
           {dataAppointments.map((appointment) => (
-            <TableRow key={appointment.date}>
+            <TableRow key={appointment.id}>
               <TableCell className="font-medium">{appointment.date}</TableCell>
               <TableCell>{appointment.time}</TableCell>
-              <TableCell>{appointment.message}</TableCell>
+              <TableCell className="break-all whitespace-normal">
+                {appointment.message}
+              </TableCell>
               <TableCell>
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>

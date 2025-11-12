@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   createAppointment,
+  getAppointmentsByDate,
   getSession,
   getUserProfile,
 } from "../_lib/data-service";
 import type { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 const generateTimeSlots = () => {
   const times = [];
@@ -32,14 +35,68 @@ export default function TermInBuchenPage() {
 
   const [error, setError] = useState("");
   // Generiere Zeit-Slots von 08:00 bis 17:30
-  const timeSlots = generateTimeSlots();
+  const [timeSlots, setTimeSlots] = useState(generateTimeSlots());
 
-  const handleChange = (
+  const handleChange = async (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+
+    // Lokale Kopie der Slots
+    const slots = generateTimeSlots();
+
+    // Wenn das Datum geändert wurde
+    if (name === "date") {
+      const now = new Date();
+      const selectedDate = new Date(`${value}T00:00:00`);
+      const day = selectedDate.getDay();
+
+      // Wochenende ignorieren
+      if (day === 0 || day === 6) {
+        setTimeSlots([]);
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        setError("Datum liegt am Wochenende");
+        return;
+      }
+
+      // FormData updaten
+      setFormData((prev) => ({ ...prev, [name]: value }));
+
+      // Gebuchte Termine für das Datum abrufen
+      const datas = await getAppointmentsByDate(value);
+
+      // Gebuchte Zeiten auf HH:MM kürzen
+      const bookedTimes = datas
+        ?.filter((d) => d.date === value)
+        .map((d) => d.time.slice(0, 5));
+
+      // Buchungen entfernen
+      let availableSlots = slots.filter((slot) => !bookedTimes?.includes(slot));
+
+      // Abgelaufene Zeiten entfernen, falls Datum heute
+      const todayStr = now.toISOString().slice(0, 10);
+      if (value === todayStr) {
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        availableSlots = availableSlots.filter((slot) => {
+          const [h, m] = slot.split(":").map(Number);
+          return h * 60 + m > currentMinutes;
+        });
+      }
+      console.log(availableSlots === null);
+      if (availableSlots.length === 0) {
+        setError("keine Termine vorhanden für den ausgewählten Tag!");
+        setTimeSlots(availableSlots);
+        return;
+      }
+      setError("");
+      // State setzen
+      setTimeSlots(availableSlots);
+      return;
+    }
+    // Für andere Inputs FormData updaten
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleBuchAnAppointment = async (e: { preventDefault: () => void }) => {
@@ -73,7 +130,6 @@ export default function TermInBuchenPage() {
 
   useEffect(() => {
     const fetchSession = async () => {
-      console.log(session);
       const userSession = await getSession();
       setSession(userSession);
       if (!userSession) {
@@ -147,17 +203,28 @@ export default function TermInBuchenPage() {
             onChange={handleChange}
           />
         </div>
-
-        {error && (
-          <div className="bg-red-100 text-red-800 p-2 rounded">{error}</div>
+        {error ? (
+          <>
+            <Alert variant="destructive">
+              <AlertCircleIcon />
+              <AlertTitle>{error}</AlertTitle>
+            </Alert>
+            <Button
+              type="submit"
+              className="bg-amber-600 text-white hover:bg-amber-700 w-full font-semibold"
+              disabled
+            >
+              Termin buchen
+            </Button>
+          </>
+        ) : (
+          <Button
+            type="submit"
+            className="bg-amber-600 text-white hover:bg-amber-700 w-full font-semibold"
+          >
+            Termin buchen
+          </Button>
         )}
-
-        <Button
-          type="submit"
-          className="bg-amber-600 text-white hover:bg-amber-700 w-full font-semibold"
-        >
-          Termin buchen
-        </Button>
       </form>
     </div>
   );
