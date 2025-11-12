@@ -75,6 +75,19 @@ export async function getAppointments() {
   return data;
 }
 
+export async function getAppointmentsByUserId(useId) {
+  let { data: appointments, error } = await supabase
+    .from("appointments")
+    .select("id, date, message, time")
+
+    // Filters
+    .eq("userId", useId);
+  if (error) {
+    throw error;
+  }
+  return appointments;
+}
+
 export async function createAppointment(appointment) {
   const { data, error } = await supabase
     .from("appointments")
@@ -83,4 +96,41 @@ export async function createAppointment(appointment) {
     throw error;
   }
   return data;
+}
+
+export async function deleteAppointment(appointmentId) {
+  const { data, error } = await supabase
+    .from("appointments")
+    .delete()
+    .eq("id", appointmentId);
+  if (error) {
+    throw error;
+  }
+  console.log(error);
+  return data;
+}
+
+export async function editAppointment(appointment, date, time, message) {
+  const appointmentId = appointment.id;
+  if (message === null) {
+    const { data, error } = await supabase
+      .from("appointments")
+      .update({ date: date, time: time })
+      .eq("id", appointmentId)
+      .select();
+    if (error) {
+      throw error;
+    }
+    return data;
+  } else {
+    const { data, error } = await supabase
+      .from("appointments")
+      .update({ date: date, time: time, message: message })
+      .eq("id", appointmentId)
+      .select();
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
 }

@@ -1,23 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { getSession, signOut } from "../_lib/data-service";
+import { getSession, getUserRole, signOut } from "../_lib/data-service";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import TermInBuchenPage from "./dashboardCustomer";
+import CustomerAppointments from "./overview";
 
 type Tab = "overview" | "appointments";
 
 export default function DashboardCustomer() {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   async function handleSignOut() {
     await signOut();
     router.push("/");
+  }
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      if (!session) {
+        router.push("/");
+        return;
+      }
+      const userType = getUserRole(session?.user?.id);
+      const userIsCustomer = (await userType) === "customer";
+      const userIsAdmin = (await userType) === "admin";
+      if (session && userIsCustomer) {
+        setLoading(false);
+        return;
+      }
+      if (session && userIsAdmin) {
+        setLoading(false);
+        return;
+      }
+    };
+    fetchSession();
+  }, []);
+
+  if (loading) {
+    return null;
   }
 
   return (
@@ -106,7 +133,7 @@ function SidebarNav({
 }) {
   const tabs: { label: string; value: Tab }[] = [
     { label: "Übersicht", value: "overview" },
-    { label: "Terminplanung", value: "appointments" },
+    { label: "Terminbuchung", value: "appointments" },
   ];
 
   return (
@@ -133,10 +160,8 @@ function SidebarNav({
 function Overview() {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-amber-600 mb-4">
-        Dashboard Übersicht
-      </h2>
-      <p>Hier siehst du eine Zusammenfassung der wichtigsten Infos.</p>
+      <h2 className="text-2xl font-bold text-amber-600 mb-4">Deine Termine</h2>
+      <CustomerAppointments />
     </div>
   );
 }

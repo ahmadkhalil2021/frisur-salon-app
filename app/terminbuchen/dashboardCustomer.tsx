@@ -9,6 +9,7 @@ import {
 } from "../_lib/data-service";
 import type { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const generateTimeSlots = () => {
   const times = [];
@@ -33,7 +34,11 @@ export default function TermInBuchenPage() {
   // Generiere Zeit-Slots von 08:00 bis 17:30
   const timeSlots = generateTimeSlots();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -54,12 +59,14 @@ export default function TermInBuchenPage() {
         setError(data);
         return;
       }
-      console.log(data);
       setFormData({
         phone: "",
         date: "",
         time: "",
         message: "",
+      });
+      toast("Termin erfolgreich erstellt.", {
+        description: newAppointment.date + " um " + newAppointment.time,
       });
     }
   };

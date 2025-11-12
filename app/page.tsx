@@ -78,7 +78,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col from-neutral-50 to-neutral-100 text-neutral-900">
+    <>
       {/* Navbar */}
       <header className="flex justify-between items-center px-6 md:px-12 py-4 border-b border-neutral-200 bg-white/70 backdrop-blur-md fixed top-0 w-full z-50">
         <Link href="/" className="flex items-center gap-3">
@@ -405,6 +405,6 @@ export default function Home() {
           </a>
         </div>
       </footer>
-    </main>
+    </>
   );
 }
