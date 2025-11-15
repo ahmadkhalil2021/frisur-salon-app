@@ -69,16 +69,15 @@ export default function Appointments() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <h2 className="text-2xl font-bold text-amber-600 mb-4">Terminplanung</h2>
-      <div>
-        <Button variant="outline" onClick={() => setViewList(false)}>
-          Kalender
-        </Button>
-        <Button variant="outline" onClick={() => setViewList(true)}>
+      <div className="flex gap-2">
+        <Button onClick={() => setViewList(false)}>Kalender</Button>
+        <Button variant="destructive" onClick={() => setViewList(true)}>
           List
         </Button>
       </div>
+
       {!viewList && (
         <div className="w-full h-[600px] md:h-[800px]">
           <Calendar

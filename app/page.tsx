@@ -7,30 +7,12 @@ import Image from "next/image";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getSession, signOut, getUserRole } from "./_lib/data-service";
-import TestimonialsScroll from "@/components/TestimonialsScroll";
-
-const team = [
-  { name: "Anna Müller", role: "Senior Stylistin", img: "/team_1.png" },
-  { name: "Lukas Schmidt", role: "Color Specialist", img: "/team_2.jpg" },
-  { name: "Sophie Weber", role: "Junior Stylistin", img: "/team3.jpg" },
-  { name: "Muster Frau", role: "Junior Stylistin", img: "/team1.png" },
-  { name: "Muster Frau", role: "Junior Stylistin", img: "/team3.jpg" },
-];
-
-const leistung = [
-  {
-    title: "Haarschnitt",
-    desc: "Klassisch, modern oder kreativ – perfekt abgestimmt auf deinen Stil.",
-  },
-  {
-    title: "Styling & Farbe",
-    desc: "Professionelle Farbtechniken & Stylings für jeden Anlass.",
-  },
-  {
-    title: "Pflege & Beratung",
-    desc: "Exklusive Pflegeprodukte & persönliche Stylingtipps.",
-  },
-];
+import TestimonialsScroll from "@/components/pages/TestimonialsScroll";
+import Services from "@/components/pages/Services";
+import About from "@/components/pages/About";
+import Team from "@/components/pages/Team";
+import Contact from "@/components/pages/Contact";
+import Footer from "@/components/pages/Footer";
 
 const menuItems = [
   { label: "Leistungen", href: "#services" },
@@ -118,9 +100,9 @@ export default function Home() {
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden flex flex-col justify-center items-center space-y-1"
         >
-          <span className="block w-6 h-0.5 bg-neutral-700"></span>
-          <span className="block w-6 h-0.5 bg-neutral-700"></span>
-          <span className="block w-6 h-0.5 bg-neutral-700"></span>
+          <span className="block w-6 h-0.5 bg-neutral-800"></span>
+          <span className="block w-6 h-0.5 bg-neutral-800"></span>
+          <span className="block w-6 h-0.5 bg-neutral-800"></span>
         </button>
 
         {/* Auth Buttons */}
@@ -178,6 +160,16 @@ export default function Home() {
               {item.label}
             </Link>
           ))}
+          <Button
+            variant="outline"
+            className="border-red-600 text-red-600 hover:bg-red-50 mt-4"
+            onClick={async () => {
+              setMenuOpen(false);
+              await handleSignOut();
+            }}
+          >
+            Abmelden
+          </Button>
         </div>
       ) : null}
 
@@ -216,8 +208,15 @@ export default function Home() {
           )}
           {useRoleCustomer && (
             <Link href="/terminbuchen" className="mt-4 inline-block">
-              <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white w-full sm:w-auto">
                 Zum Terminbuchen
+              </Button>
+            </Link>
+          )}
+          {useRoleAdmin && (
+            <Link href="/dashboard" className="mt-4 inline-block">
+              <Button className="bg-amber-600 hover:bg-amber-700 text-white w-full sm:w-auto">
+                Zum Dashboard
               </Button>
             </Link>
           )}
@@ -238,173 +237,18 @@ export default function Home() {
           />
         </motion.div>
       </section>
-
       {/* Services Section */}
-      <section
-        id="services"
-        className="py-16 md:py-24 px-6 md:px-20 bg-white text-center"
-      >
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-neutral-800">
-          Unsere Leistungen
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {leistung.map((s, i) => (
-            <motion.div
-              key={i}
-              className="p-8 rounded-2xl border border-neutral-200 bg-neutral-50 hover:shadow-xl transition"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.2 }}
-            >
-              <h3 className="text-xl font-semibold mb-3 text-amber-600">
-                {s.title}
-              </h3>
-              <p className="text-neutral-600">{s.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
+      <Services />
       {/* About Section */}
-      <section id="about" className="py-16 md:py-24 px-6 md:px-20 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-neutral-800">
-          Über uns
-        </h2>
-        <p className="max-w-3xl mx-auto text-neutral-600 text-base md:text-lg">
-          Bei <strong>Salon Eleganz</strong> dreht sich alles um dich. Unser
-          erfahrenes Team kombiniert handwerkliches Können mit einem Gespür für
-          Trends, um deinen individuellen Stil zu unterstreichen.
-        </p>
-      </section>
-
+      <About />
       {/* Team Section */}
-      <section
-        id="team"
-        className="py-16 md:py-24 px-6 md:px-20 bg-white text-center"
-      >
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-neutral-800">
-          Unser Team
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-6xl mx-auto px-4">
-          {team.map((member, i) => (
-            <motion.div
-              key={i}
-              className="p-6 rounded-2xl border border-neutral-200 bg-neutral-100 hover:shadow-xl transition"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.2 }}
-            >
-              <div className="relative aspect-3/4 w-full mb-4">
-                <Image
-                  src={member.img}
-                  alt={member.name}
-                  fill
-                  className="object-cover rounded-2xl"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  quality={75}
-                />
-              </div>
-              <h3 className="text-xl font-semibold mb-1 text-amber-600">
-                {member.name}
-              </h3>
-              <p className="text-neutral-600">{member.role}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
+      <Team />
       {/* Customer Review */}
       <TestimonialsScroll />
-
       {/* Contact Section */}
-      <section
-        id="contact"
-        className="py-16 md:py-24 px-6 md:px-20 text-center"
-      >
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-neutral-800">
-          Kontakt
-        </h2>
-        <p className="max-w-3xl mx-auto text-neutral-600 text-base md:text-lg mb-6">
-          Hast du Fragen oder möchtest einen Termin vereinbaren? Wir sind für
-          dich da!
-        </p>
-        <div className="space-y-2 text-neutral-600 text-base md:text-lg">
-          <p>
-            E-Mail:{" "}
-            <a
-              href="mailto:test@gmail.com"
-              className="text-amber-600 hover:underline"
-            >
-              <strong>test@gmail.com</strong>
-            </a>
-          </p>
-          <p>
-            Telefon:{" "}
-            <a
-              href="tel:+49123456789"
-              className="text-amber-600 hover:underline"
-            >
-              <strong>+49 123 456789</strong>
-            </a>
-          </p>
-          <p>
-            Adresse:{" "}
-            <span className="text-amber-600 font-semibold">
-              Musterstraße 1, 12345 Musterstadt
-            </span>
-          </p>
-          <p>
-            Öffnungszeiten:{" "}
-            <span className="text-amber-600 font-semibold">
-              Mo-Fr: 9:00–18:00 Uhr, Sa: 9:00–14:00 Uhr
-            </span>
-          </p>
-        </div>
-      </section>
-
+      <Contact />
       {/* Footer */}
-      <footer className="bg-neutral-900 text-neutral-300 py-10 text-center mt-auto">
-        <p className="text-sm md:text-base">
-          &copy; {new Date().getFullYear()} Salon Eleganz – Alle Rechte
-          vorbehalten.
-        </p>
-        <div className="flex justify-center space-x-6 mt-4">
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-200 hover:text-white transition"
-          >
-            <FaFacebook size={20} />
-          </a>
-          <a
-            href="https://x.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-200 hover:text-white transition"
-          >
-            <FaTwitter size={20} />
-          </a>
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-200 hover:text-white transition"
-          >
-            <FaInstagram size={20} />
-          </a>
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-200 hover:text-white transition"
-          >
-            <FaLinkedin size={20} />
-          </a>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

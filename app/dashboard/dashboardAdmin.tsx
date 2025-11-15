@@ -23,7 +23,7 @@ export default function DashboardAdmin() {
   return (
     <div className="flex min-h-screen bg-neutral-50">
       {/* Desktop Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-6 hidden md:flex flex-col fixed h-full">
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-neutral-200 p-6 fixed h-full">
         <Logo />
         <SidebarNav activeTab={activeTab} setActiveTab={setActiveTab} />
         <Button
@@ -35,7 +35,7 @@ export default function DashboardAdmin() {
       </aside>
 
       {/* Mobile Topbar */}
-      <header className="fixed top-0 left-0 right-0 bg-white shadow-md flex items-center justify-between md:hidden z-50">
+      <header className="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between p-4 md:hidden z-40">
         <Logo />
         <div className="flex items-center gap-2">
           <Button
@@ -69,7 +69,7 @@ export default function DashboardAdmin() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 p-6 mt-16 md:mt-0 md:ml-64 min-h-screen">
+      <main className="flex-1 md:ml-64 p-6 md:p-10 mt-32 md:mt-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -79,8 +79,8 @@ export default function DashboardAdmin() {
             transition={{ duration: 0.25 }}
           >
             {activeTab === "overview" && <Overview />}
-            {activeTab === "users" && <Users />}
             {activeTab === "appointments" && <Appointments />}
+            {activeTab === "users" && <Users />}
             {activeTab === "reports" && <Reports />}
           </motion.div>
         </AnimatePresence>
@@ -108,8 +108,8 @@ function SidebarNav({
 }) {
   const tabs: { label: string; value: Tab }[] = [
     { label: "Übersicht", value: "overview" },
-    { label: "Benutzerverwaltung", value: "users" },
     { label: "Terminplanung", value: "appointments" },
+    { label: "Benutzerverwaltung", value: "users" },
     { label: "Berichte & Analysen", value: "reports" },
   ];
 
