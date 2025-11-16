@@ -1,14 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { signOut } from "../_lib/data-service";
+import { getAllUsers, signOut } from "../_lib/data-service";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Appointment from "./Appointments";
+import { Card, CardHeader } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontalIcon } from "lucide-react";
 
-type Tab = "overview" | "users" | "appointments" | "reports";
+type Tab = "overview" | "customers" | "appointments" | "reports";
 
 export default function DashboardAdmin() {
   const router = useRouter();
@@ -80,7 +89,7 @@ export default function DashboardAdmin() {
           >
             {activeTab === "overview" && <Overview />}
             {activeTab === "appointments" && <Appointments />}
-            {activeTab === "users" && <Users />}
+            {activeTab === "customers" && <Customers />}
             {activeTab === "reports" && <Reports />}
           </motion.div>
         </AnimatePresence>
@@ -109,7 +118,7 @@ function SidebarNav({
   const tabs: { label: string; value: Tab }[] = [
     { label: "Übersicht", value: "overview" },
     { label: "Terminplanung", value: "appointments" },
-    { label: "Benutzerverwaltung", value: "users" },
+    { label: "Kundenverwaltung", value: "customers" },
     { label: "Berichte & Analysen", value: "reports" },
   ];
 
@@ -145,13 +154,62 @@ function Overview() {
   );
 }
 
-function Users() {
+type Customer = {
+  id_number: any;
+  name: any;
+  role: any;
+  email: any;
+};
+
+function Customers() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const response = await getAllUsers();
+      if (response) {
+        setCustomers(response);
+      }
+    };
+    fetchCustomers();
+  }, []);
+
   return (
     <div>
-      <h2 className="text-2xl font-bold text-amber-600 mb-4">
-        Benutzerverwaltung
+      <h2 className="text-2xl font-bold text-amber-600 mb-3">
+        Kundenverwaltung
       </h2>
-      <p>Verwalten Sie Benutzerkonten, Rollen und Berechtigungen.</p>
+
+      <div className="border-b-2 border-amber-600 pb-2 mb-10"></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {customers.map((customer) => (
+          <Card
+            key={customer.id_number}
+            className="hover:shadow-lg transition-shadow duration-200"
+          >
+            <CardHeader className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-semibold">{customer.name}</h3>
+                <p className="text-sm text-neutral-600">{customer.email}</p>
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreHorizontalIcon />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>Editieren</DropdownMenuItem>
+                    <DropdownMenuItem>Profil blockieren</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

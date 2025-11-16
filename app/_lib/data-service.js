@@ -1,16 +1,18 @@
 import { supabase } from "./superbase.js";
 
 export async function signUp(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  let { data, error } = await supabase.auth.signUp({ email, password });
   if (error) {
     throw error;
   }
   return data;
 }
-export async function setUserName(userId, userName, role) {
+export async function updateUserName(userId, userName) {
   const { data, error } = await supabase
     .from("profiles")
-    .insert([{ id: userId, name: userName, role: role }]);
+    .update({ name: userName })
+    .eq("id", userId)
+    .select();
   if (error) {
     throw error;
   }
@@ -53,6 +55,16 @@ export async function getUserProfile(userId) {
     throw error;
   }
   return data;
+}
+
+export async function getAllUsers() {
+  let { data: profiles, error } = await supabase
+    .from("profiles")
+    .select("id_number, name, role, email");
+  if (error) {
+    throw error;
+  }
+  return profiles;
 }
 
 export async function getUserRole(userId) {

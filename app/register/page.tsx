@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { signUp, setUserName } from "../_lib/data-service";
-import { useState } from "react";
+import { signUp, updateUserName } from "../_lib/data-service";
+import { use, useState } from "react";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -16,8 +16,9 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       const { user } = await signUp(email, password);
+      console.log("Registered user:", user);
       if (user) {
-        await setUserName(user.id, name, "customer");
+        await updateUserName(user.id, name);
         setRegistered(true);
         setErrors(null);
         setName("");

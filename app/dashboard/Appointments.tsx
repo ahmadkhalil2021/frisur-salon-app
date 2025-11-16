@@ -24,6 +24,7 @@ interface Event {
 }
 interface Appointment {
   id: string;
+  name: string;
   date: string;
   time: string;
   message?: string;
@@ -105,6 +106,7 @@ export default function Appointments() {
             <TableRow>
               <TableHead className="w-[100px]">Datum</TableHead>
               <TableHead>Uhrzeit</TableHead>
+              <TableHead>Kunde</TableHead>
               <TableHead>Nachricht</TableHead>
               <TableHead></TableHead>
             </TableRow>
@@ -115,6 +117,7 @@ export default function Appointments() {
                 <TableCell className="font-medium">
                   {appointment.date}
                 </TableCell>
+                <TableCell>{appointment.name}</TableCell>
                 <TableCell>{appointment.time}</TableCell>
                 <TableCell className="break-all whitespace-normal">
                   {appointment.message}

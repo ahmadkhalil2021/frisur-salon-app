@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { getSession, signOut, getUserRole } from "./_lib/data-service";
 import TestimonialsScroll from "@/components/pages/TestimonialsScroll";
@@ -131,7 +130,7 @@ export default function Home() {
               <Button
                 variant="outline"
                 className="border-red-600 text-red-600 hover:bg-red-50 ml-2"
-                onClick={async () => handleSignOut()}
+                onClick={handleSignOut}
               >
                 Abmelden
               </Button>
@@ -160,16 +159,19 @@ export default function Home() {
               {item.label}
             </Link>
           ))}
-          <Button
-            variant="outline"
-            className="border-red-600 text-red-600 hover:bg-red-50 mt-4"
-            onClick={async () => {
-              setMenuOpen(false);
-              await handleSignOut();
-            }}
-          >
-            Abmelden
-          </Button>
+          {useRoleAdmin ||
+            (useRoleCustomer && (
+              <Button
+                variant="outline"
+                className="border-red-600 text-red-600 hover:bg-red-50 mt-4"
+                onClick={async () => {
+                  setMenuOpen(false);
+                  await handleSignOut();
+                }}
+              >
+                Abmelden
+              </Button>
+            ))}
         </div>
       ) : null}
 
