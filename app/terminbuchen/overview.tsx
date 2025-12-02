@@ -317,7 +317,7 @@ export default function CustomerAppointments() {
             <DialogDescription>
               Bist du sicher, dass du den Termin ändern willst?
             </DialogDescription>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block mb-1 font-medium">Datum*</label>
                 <input
@@ -330,6 +330,7 @@ export default function CustomerAppointments() {
                   onChange={handleChangeDate}
                 />
               </div>
+
               <div>
                 <label className="block mb-1 font-medium">Uhrzeit*</label>
                 <select
@@ -347,7 +348,8 @@ export default function CustomerAppointments() {
                   ))}
                 </select>
               </div>
-              <div className="w-90">
+
+              <div className="md:col-span-2">
                 <label className="block mb-1 font-medium">Nachricht</label>
                 <textarea
                   name="message"
