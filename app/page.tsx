@@ -28,28 +28,34 @@ export default function Home() {
   const [useRoleCustomer, setUserRoleCustomer] = useState<boolean | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchSession() {
       const session = await getSession();
+
+      if (!isMounted) return;
+
       if (!session) {
         setUser(null);
         return;
       }
-      setUser(session?.user || null);
 
-      const userRole = await getUserRole(session?.user?.id);
-      if (userRole === "admin") {
-        setUserRoleAdmin(true);
-      } else {
-        setUserRoleAdmin(false);
-      }
-      if (userRole === "customer") {
-        setUserRoleCustomer(true);
-      } else {
-        setUserRoleCustomer(false);
-      }
-      console.log(userRole);
+      setUser(session.user);
+      console.log("Session User:", session.user);
+
+      const userRole = await getUserRole(session.user.id);
+
+      if (!isMounted) return;
+      console.log("User Role:", userRole);
+      setUserRoleAdmin(userRole === "admin");
+      setUserRoleCustomer(userRole === "customer");
     }
+
     fetchSession();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   async function handleSignOut() {
@@ -134,6 +140,12 @@ export default function Home() {
               >
                 Abmelden
               </Button>
+              <span className="ml-4 text-sm text-neutral-600">
+                Angemeldet als:{" "}
+                <strong className="text-amber-600">
+                  {useRoleAdmin ? "Admin" : useRoleCustomer ? "Kunde" : "User"}
+                </strong>
+              </span>
             </div>
           )}
           {!user ? (

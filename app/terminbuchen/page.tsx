@@ -24,24 +24,23 @@ export default function DashboardCustomer() {
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession();
+
       if (!session) {
         router.push("/");
         return;
       }
-      const userType = getUserRole(session?.user?.id);
-      const userIsCustomer = (await userType) === "customer";
-      const userIsAdmin = (await userType) === "admin";
-      if (session && userIsCustomer) {
+      const userType = await getUserRole(session.user.id);
+
+      if (userType === "customer" || userType === "admin") {
         setLoading(false);
         return;
       }
-      if (session && userIsAdmin) {
-        setLoading(false);
-        return;
-      }
+
+      setLoading(false);
     };
+
     fetchSession();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return null;

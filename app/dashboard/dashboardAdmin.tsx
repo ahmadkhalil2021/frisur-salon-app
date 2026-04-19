@@ -44,22 +44,27 @@ export default function DashboardAdmin() {
       </aside>
 
       {/* Mobile Topbar */}
-      <header className="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between p-4 md:hidden z-40">
+      <header className="fixed top-0 left-0 right-0 bg-white border-b border-neutral-200 flex items-center justify-between px-4 py-3 md:hidden z-40 shadow-sm">
         <Logo />
-        <div className="flex items-center gap-2">
-          <Button
-            className="bg-amber-600 text-white hover:bg-amber-700"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            Menü
-          </Button>
-        </div>
+        <Button
+          className="bg-amber-600 text-white hover:bg-amber-700"
+          onClick={() => setMobileMenuOpen(true)}
+        >
+          Menü
+        </Button>
       </header>
 
       {/* Mobile Sidebar Drawer */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/30 z-50 md:hidden">
-          <aside className="w-64 bg-white h-full p-6">
+        <div
+          className="fixed inset-0 bg-black/40 z-50 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <aside
+            className="w-64 bg-white h-full p-6 flex flex-col shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Logo />
             <SidebarNav
               activeTab={activeTab}
               setActiveTab={(tab) => {
@@ -78,7 +83,7 @@ export default function DashboardAdmin() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64 p-6 md:p-10 mt-32 md:mt-0">
+      <main className="flex-1 md:ml-64 px-4 py-6 md:p-10 mt-20 md:mt-0 max-w-7xl mx-auto w-full">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -86,6 +91,7 @@ export default function DashboardAdmin() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.25 }}
+            className="pt-2"
           >
             {activeTab === "overview" && <Overview />}
             {activeTab === "appointments" && <Appointments />}
@@ -99,9 +105,10 @@ export default function DashboardAdmin() {
 }
 
 /* --- Components --- */
+
 function Logo() {
   return (
-    <div className="flex items-center gap-2 mb-10">
+    <div className="flex items-center gap-2 mb-6">
       <Image src="/favicon.ico" alt="Logo" width={32} height={32} />
       <h1 className="text-lg font-bold text-amber-600">Salon Eleganz</h1>
     </div>
@@ -143,9 +150,10 @@ function SidebarNav({
 }
 
 /* --- Content Components --- */
+
 function Overview() {
   return (
-    <div>
+    <div className="bg-white rounded-xl shadow-md p-6">
       <h2 className="text-2xl font-bold text-amber-600 mb-4">
         Dashboard Übersicht
       </h2>
@@ -167,25 +175,22 @@ function Customers() {
   useEffect(() => {
     const fetchCustomers = async () => {
       const response = await getAllUsers();
-      if (response) {
-        setCustomers(response);
-      }
+      if (response) setCustomers(response);
     };
     fetchCustomers();
   }, []);
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-amber-600 mb-3">
+      <h2 className="text-2xl font-bold text-amber-600 mb-4">
         Kundenverwaltung
       </h2>
 
-      <div className="border-b-2 border-amber-600 pb-2 mb-10"></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {customers.map((customer) => (
           <Card
             key={customer.id_number}
-            className="hover:shadow-lg transition-shadow duration-200"
+            className="hover:shadow-lg transition-shadow"
           >
             <CardHeader className="flex justify-between items-center">
               <div>
@@ -220,7 +225,7 @@ function Appointments() {
 
 function Reports() {
   return (
-    <div>
+    <div className="bg-white rounded-xl shadow-md p-6">
       <h2 className="text-2xl font-bold text-amber-600 mb-4">
         Berichte & Analysen
       </h2>

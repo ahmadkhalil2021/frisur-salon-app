@@ -20,6 +20,7 @@ export default function Dashboard() {
       }
       const userIsCustomer = (await userType) === "customer";
       if (session && userIsCustomer) {
+        console.log("User is a customer, redirecting to home page.");
         router.push("/");
         setLoading(true);
         return;
@@ -28,7 +29,6 @@ export default function Dashboard() {
     };
     fetchSession();
   }, []);
-
   if (loading && userIsCustomer) {
     return null;
   }

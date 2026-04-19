@@ -33,7 +33,7 @@ export default function TermInBuchenPage() {
   });
   const [session, setSession] = useState<Session | null>(null);
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   // Generiere Zeit-Slots von 08:00 bis 17:30
   const [timeSlots, setTimeSlots] = useState(generateTimeSlots());
 
@@ -113,10 +113,11 @@ export default function TermInBuchenPage() {
       if (newAppointment.message === "") {
         newAppointment.message = "keine Nachricht";
       }
-      const data = await createAppointment(newAppointment);
-      if (data) {
-        setError(data);
-        return;
+      console.log(newAppointment);
+      const error = await createAppointment(newAppointment);
+
+      if (error) {
+        setError(error); // ✅ String
       }
       setFormData({
         phone: "",
