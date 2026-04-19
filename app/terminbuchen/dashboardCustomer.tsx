@@ -10,9 +10,9 @@ import {
 } from "../_lib/data-service";
 import type { Session } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 const generateTimeSlots = () => {
   const times = [];
@@ -37,10 +37,12 @@ export default function TermInBuchenPage() {
   // Generiere Zeit-Slots von 08:00 bis 17:30
   const [timeSlots, setTimeSlots] = useState(generateTimeSlots());
 
+  const { showToast } = useToast();
+
   const handleChange = async (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 
@@ -122,8 +124,10 @@ export default function TermInBuchenPage() {
         time: "",
         message: "",
       });
-      toast("Termin erfolgreich erstellt.", {
-        description: newAppointment.date + " um " + newAppointment.time,
+      showToast({
+        title: "Termin erfolgreich erstellt.",
+        message: newAppointment.date + " um " + newAppointment.time,
+        type: "success",
       });
     }
   };

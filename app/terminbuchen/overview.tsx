@@ -32,7 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
+import { useToast } from "@/components/ui/toast";
 
 const generateTimeSlots = () => {
   const times = [];
@@ -65,6 +65,7 @@ export default function CustomerAppointments() {
     time: "",
     message: "",
   });
+  const { showToast } = useToast();
 
   useEffect(() => {
     const getAppointments = async () => {
@@ -76,7 +77,7 @@ export default function CustomerAppointments() {
         const dataWithDisabled = data.map((appointment: Appointment) => {
           // Datum + Zeit kombinieren
           const appointmentDateTime = new Date(
-            `${appointment.date}T${appointment.time}`
+            `${appointment.date}T${appointment.time}`,
           );
 
           // Differenz in Millisekunden
@@ -113,13 +114,18 @@ export default function CustomerAppointments() {
     if (selectedAppointment) {
       await deleteAppointment(selectedAppointment?.id);
       setDataAppointments((prev) =>
-        prev.filter((appointment) => appointment.id !== selectedAppointment?.id)
+        prev.filter(
+          (appointment) => appointment.id !== selectedAppointment?.id,
+        ),
       );
       setShowShareDialog(false);
       const deletedAppointment =
         selectedAppointment.date + " um " + selectedAppointment.time;
-      toast("Termin erfolgreich gelöscht.", {
-        description: deletedAppointment,
+
+      showToast({
+        title: "Termin erfolgreich gelöscht.",
+        message: deletedAppointment,
+        type: "success",
       });
     }
   };
@@ -128,7 +134,11 @@ export default function CustomerAppointments() {
     // Implement Edit functionality here
     console.log(formData);
     if (formData.date === "" || formData.time === "") {
-      toast("Keine Daten. eingegeben!");
+      showToast({
+        title: "Keine Daten eingegeben!",
+        message: "Bitte füllen Sie alle Pflichtfelder aus.",
+        type: "error",
+      });
     }
     if (selectedAppointment) {
       const now = new Date();
@@ -139,20 +149,19 @@ export default function CustomerAppointments() {
 
       const date_cannot_changed = diffHours < 24;
       if (date_cannot_changed) {
-        toast(
-          "Termin liegt in der Vergangenheit oder nach 24 stunden von jetzt.",
-          {
-            description:
-              selectedAppointment.date + " um " + selectedAppointment.time,
-          }
-        );
+        showToast({
+          title:
+            "Termin liegt in der Vergangenheit oder nach 24 stunden von jetzt.",
+          message: selectedAppointment.date + " um " + selectedAppointment.time,
+          type: "error",
+        });
         return;
       }
       const data = await editAppointment(
         selectedAppointment,
         formData.date,
         formData.time,
-        formData.message ? formData.message : null
+        formData.message ? formData.message : null,
       );
       if (data) {
         setDataAppointments((prev) =>
@@ -164,16 +173,21 @@ export default function CustomerAppointments() {
                   time: formData.time,
                   message: formData.message,
                 }
-              : appointment
-          )
+              : appointment,
+          ),
         );
-        toast("Termin erfolgreich geändert.", {
-          description:
-            selectedAppointment.date + " um " + selectedAppointment.time,
+        showToast({
+          title: "Termin erfolgreich geändert.",
+          message: formData.date + " um " + formData.time,
+          type: "success",
         });
         setShowNewDialog(false);
       } else {
-        toast("Termin konnte nicht geändert werden.");
+        showToast({
+          title: "Fehler",
+          message: "Termin konnte nicht geändert werden.",
+          type: "error",
+        });
         setShowNewDialog(false);
       }
     }
@@ -182,7 +196,7 @@ export default function CustomerAppointments() {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     setFormData({
       ...formData,
@@ -194,7 +208,7 @@ export default function CustomerAppointments() {
   const handleChangeDate = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const date = new Date(`${e.target.value}T${"00:00:00"}`);
     const day = date.getDay();
