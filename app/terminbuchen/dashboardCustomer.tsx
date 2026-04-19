@@ -117,7 +117,9 @@ export default function TermInBuchenPage() {
       const error = await createAppointment(newAppointment);
 
       if (error) {
-        setError(error); // ✅ String
+        setError(
+          typeof error === "string" ? error : "Ein Fehler ist aufgetreten",
+        );
       }
       setFormData({
         phone: "",
